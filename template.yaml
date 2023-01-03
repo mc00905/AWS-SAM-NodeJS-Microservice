@@ -21,8 +21,8 @@ Resources:
   LambdaTokenAuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: microservice/src/lambdas/gateway-authorizor
-      Handler: LambdaAuthorizer.authorize
+      CodeUri: microservice/src/functions/gateway-authorizor
+      Handler: Handler.authorize
       Runtime: nodejs18.x
       Architectures:
         - x86_64
@@ -33,7 +33,7 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints: 
-        - LambdaAuthorizer.ts
+        - Handler.ts
 
   AuthorizerLambdaAccessRole:
     Type: AWS::IAM::Role
@@ -119,8 +119,8 @@ Resources:
   CreateNoteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: microservice/src/lambdas/notes-handler
-      Handler: NotesHandler.createNote
+      CodeUri: microservice/src/functions/notes/CreateNotes
+      Handler: Handler.createNote
       Runtime: nodejs18.x
       Architectures:
         - x86_64
@@ -137,13 +137,13 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints: 
-        - NotesHandler.ts
+        - Handler.ts
 
   GetNotesForUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: microservice/src/lambdas/notes-handler
-      Handler: NotesHandler.getNotesForUser
+      CodeUri: microservice/src/functions/notes/GetNotesForUser
+      Handler: Handler.getNotesForUser
       Runtime: nodejs18.x
       Architectures:
         - x86_64
@@ -160,4 +160,4 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints: 
-        - NotesHandler.ts
+        - Handler.ts
