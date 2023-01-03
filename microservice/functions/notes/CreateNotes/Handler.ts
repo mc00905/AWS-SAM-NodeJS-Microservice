@@ -1,4 +1,4 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
+import type { APIGatewayProxyHandler } from 'aws-lambda';
 import { APIGatewayProxyEventFormatter } from './middleware/APIGatewayProxyEventFormatter';
 import { APIGatewayProxyResultResolver, ResponseLibrary } from './middleware/APIGatewayProxyResultResolver';
 import { CreateNotesProvider } from './providers/CreateNotesProvider';

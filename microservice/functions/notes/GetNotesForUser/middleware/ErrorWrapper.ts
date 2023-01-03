@@ -1,7 +1,7 @@
 export class ErrorWrapper extends Error {
     public details: string;
-    public name: string;
-    public message: string;
+    public override name: string;
+    public override message: string;
     public status: number;
 
     constructor(status: number, errorIdentifier: string, message: string, details = '') {

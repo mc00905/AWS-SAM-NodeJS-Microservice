@@ -1,15 +1,29 @@
 {
-    "compilerOptions": {
-      "target": "ES2022",
-      "strict": true,
-      "preserveConstEnums": true,
-      "noEmit": true,
-      "sourceMap": false,
-      "module":"ESNext",
-      "moduleResolution":"node",
-      "esModuleInterop": true, 
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,  
-    },
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "lib": [
+      "es2022"
+    ],
+    "module": "es2022",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "importsNotUsedAsValues": "error",
+    "checkJs": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  },
+  "exclude": [
+    "node_modules"  
+  ]
 }

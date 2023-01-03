@@ -1,0 +1,12 @@
+{
+    "name": "note-store-microservice",
+    "version": "1.0.0",
+    "description": "My Note Store application",
+    "repository": "https://github.com/mc00905/AWS-SAM-NodeJS-Microservice",
+    "author": "mc00905",
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.226.0",
+        "@aws-sdk/lib-dynamodb": "^3.226.0",
+        "neverthrow": "^5.1.0"
+    }
+}

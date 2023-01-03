@@ -1,5 +1,5 @@
 import { errAsync, okAsync, ResultAsync } from 'neverthrow';
-import { GenericInternalServerError } from './middleware/ErrorLibrary';
+import type { GenericInternalServerError } from './middleware/ErrorLibrary';
 import { GetNotesForUserAgent } from './GetNotesForUserAgent';
 
 interface Note {
