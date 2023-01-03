@@ -1,0 +1,102 @@
+
+openapi: 3.0.0
+
+info:
+  title: My Note Storage API
+  version: 1.0.0
+  description: "An API for a basic note storage microservice"
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+  ex-paramater-validation:
+    validateRequestBody: false
+    validateRequestParameters: true
+  ex-body-validation:
+    validateRequestBody: true
+    validateRequestParameters: false
+
+x-amazon-apigateway-gateway-responses:
+  BAD_REQUEST_BODY:
+    statusCode: 400
+    responseTemplates:
+      application/json: "{\n\"message\": $context.error.messageString $context.error.validationErrorString,\n\"statusCode\": 400\n}"
+  BAD_REQUEST_PARAMETERS:
+    statusCode: 400
+    responseTemplates:
+      application/json: "{\n\"message\": $context.error.messageString,\n\"statusCode\": 400\n}"
+  
+paths:
+  /users/{userId}/notes:
+    get:
+      operationId: getNotesForUser
+      x-amazon-apigateway-request-validator: ex-parameter-validation
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: ${ApiAccessRole.Arn}
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNotesForUserFunction.Arn}/invocations
+        httpMethod: POST
+        timeoutInMillis: 3000
+        type: "aws_proxy"
+      
+      responses:
+        '200':
+          description: A 200 response.
+      security:
+        - LambdaTokenAuthorizer: []
+
+    post:
+      operationId: createNote
+      x-amazon-apigateway-request-validator: all
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: ${ApiAccessRole.Arn}
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateNoteFunction.Arn}/invocations
+        httpMethod: POST
+        timeoutInMillis: 3000
+        type: "aws_proxy"
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNoteRequest'
+      
+      responses:
+        '201':
+          description: A 201 response.
+      security:
+        - LambdaTokenAuthorizer: []
+
+components:
+  securitySchemes:
+    LambdaTokenAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: "custom"
+      x-amazon-apigateway-authorizer:
+        type: token
+        identityValidationExpression: Bearer\s(.*?)
+        authorizerUri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaTokenAuthorizerFunction.Arn}/invocations
+        authorizerCredentials:
+          Fn::Sub: ${AuthorizerLambdaAccessRole.Arn}
+
+  schemas:
+    CreateNoteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: text
+        content:
+          type: string
+          description: text
+      required:
+        - title
+        - content

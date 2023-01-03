@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM template for my Notes micro-service
+  
+Globals:
+  Function:
+    Timeout: 30
+
+Parameters:
+  AppName:
+    Type: String
+    Default: notes-microservice
+  Stage:
+    Type: String
+    Default: development
+  
+
+Resources:
+  #------ LambdaAuth Definitions -------------------------------------------------------------------------------------------------------------
+  LambdaTokenAuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: microservice/src/lambdas/gateway-authorizor
+      Handler: LambdaAuthorizer.authorize
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+        - LambdaAuthorizer.ts
+
+  AuthorizerLambdaAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: 
+            !Sub ${AppName}-api-lambda-authorizer-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !Sub ${LambdaTokenAuthorizerFunction.Arn}
+
+
+ 
+  #------ API Config -------------------------------------------------------------------------------------------------------------
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub ${AppName}-api
+      OpenApiVersion: '3.0.0'
+      StageName: !Sub ${Stage}
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: microservice/src/swagger.yaml
+  
+#------ API Gateway Lambda Proxy Roles Config -------------------------------------------------------------------------------------------------------------
+  ApiAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub ${AppName}-api-access-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt CreateNoteFunction.Arn
+                  - !GetAtt GetNotesForUserFunction.Arn
+
+  
+  #------ DYNAMO Config -------------------------------------------------------------------------------------------------------------
+  NotesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: notes
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: title
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: title
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  #------ Notes Lambda Functions -------------------------------------------------------------------------------------------------------------
+  CreateNoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: microservice/src/lambdas/notes-handler
+      Handler: NotesHandler.createNote
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Policies:
+       - DynamoDBCrudPolicy:
+          TableName: !Ref NotesTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NotesTable
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+        - NotesHandler.ts
+
+  GetNotesForUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: microservice/src/lambdas/notes-handler
+      Handler: NotesHandler.getNotesForUser
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Policies:
+       - DynamoDBCrudPolicy:
+          TableName: !Ref NotesTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NotesTable
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: 
+        - NotesHandler.ts
