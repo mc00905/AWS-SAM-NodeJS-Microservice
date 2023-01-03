@@ -2,7 +2,6 @@
   "name": "note-store-microservice",
   "version": "1.0.0",
   "description": "My Note Store application",
-  "main": "app.js",
   "repository": "https://github.com/mc00905/AWS-SAM-NodeJS-Microservice",
   "author": "mc00905",
   "scripts": {

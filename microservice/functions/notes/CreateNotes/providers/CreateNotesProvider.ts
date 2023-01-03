@@ -1,7 +1,12 @@
 import { errAsync, okAsync, ResultAsync } from 'neverthrow';
-import { GenericInternalServerError } from '../../../middleware/ErrorLibrary';
-import { CreateNotesAgent } from './CreateNotesAgent';
-import { Note } from '../types/Note';
+import { GenericInternalServerError } from '../middleware/ErrorLibrary';
+import { CreateNotesAgent } from '../data-agents/CreateNotesAgent';
+
+interface Note {
+    userId: string;
+    title: string;
+    content: string;
+}
 
 export class CreateNotesProvider {
     private agent: CreateNotesAgent;

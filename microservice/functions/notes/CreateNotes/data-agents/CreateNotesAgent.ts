@@ -1,8 +1,13 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 import { ResultAsync } from 'neverthrow';
-import { GenericInternalServerError } from '../../../middleware/ErrorLibrary';
-import { Note } from '../types/Note';
+import { GenericInternalServerError } from '../middleware/ErrorLibrary';
+
+interface Note {
+    userId: string;
+    title: string;
+    content: string;
+}
 
 export class CreateNotesAgent {
     private dynamoClient: DynamoDBClient;

@@ -21,7 +21,7 @@ Resources:
   LambdaTokenAuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: microservice/src/functions/gateway-authorizor
+      CodeUri: functions/gateway-authorizor
       Handler: Handler.authorize
       Runtime: nodejs18.x
       Architectures:
@@ -71,7 +71,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: microservice/src/swagger.yaml
+            Location: openapi/swagger.yaml
   
 #------ API Gateway Lambda Proxy Roles Config -------------------------------------------------------------------------------------------------------------
   ApiAccessRole:
@@ -115,11 +115,12 @@ Resources:
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
+
   #------ Notes Lambda Functions -------------------------------------------------------------------------------------------------------------
   CreateNoteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: microservice/src/functions/notes/CreateNotes
+      CodeUri: functions/notes/CreateNotes
       Handler: Handler.createNote
       Runtime: nodejs18.x
       Architectures:
@@ -134,7 +135,7 @@ Resources:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
+        Target: "ES2022"
         Sourcemap: true
         EntryPoints: 
         - Handler.ts
@@ -142,7 +143,7 @@ Resources:
   GetNotesForUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: microservice/src/functions/notes/GetNotesForUser
+      CodeUri: functions/notes/GetNotesForUser
       Handler: Handler.getNotesForUser
       Runtime: nodejs18.x
       Architectures:
@@ -157,7 +158,7 @@ Resources:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
+        Target: "ES2022"
         Sourcemap: true
         EntryPoints: 
         - Handler.ts

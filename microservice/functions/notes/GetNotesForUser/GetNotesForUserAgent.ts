@@ -2,7 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument, QueryCommandOutput, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { ResultAsync } from 'neverthrow';
-import { GenericInternalServerError } from '../../../middleware/ErrorLibrary';
+import { GenericInternalServerError } from './middleware/ErrorLibrary';
 
 export class GetNotesForUserAgent {
     private dynamoClient: DynamoDBClient;

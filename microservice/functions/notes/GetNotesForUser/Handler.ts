@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { APIGatewayProxyEventFormatter } from '../../../middleware/APIGatewayProxyEventFormatter';
-import { APIGatewayProxyResultResolver, ResponseLibrary } from '../../../middleware/APIGatewayProxyResultResolver';
+import { APIGatewayProxyEventFormatter } from './middleware/APIGatewayProxyEventFormatter';
+import { APIGatewayProxyResultResolver, ResponseLibrary } from './middleware/APIGatewayProxyResultResolver';
 import { GetNotesForUserProvider } from './GetNotesForUserProvider';
 
 const provider = new GetNotesForUserProvider();
